@@ -1,0 +1,31 @@
+{% extends "base_withoutnav.html" %}
+{% load static %}
+{% block content %}
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    Error: {{error}}
+</div>
+<br><br>
+
+{% endif %}
+
+<br><br><br>
+<img src="{% static 'thepodcaster_app/st_icon.png' %}" width="64" height="64">
+<br>
+<h3>Please login</h3>
+<br>
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+        <label class="form-label">{{field.label_tag}}</label>
+        {{field}}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Sign In</button>
+</form>
+
+
+<a href="/register">No account? Create new one.</a>
+{% endblock %}

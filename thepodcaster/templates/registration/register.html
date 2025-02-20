@@ -1,0 +1,21 @@
+{% extends "base_withoutnav.html" %}
+{% load static %}
+{% block content %}
+<br><br><br>
+<img src="{% static 'thepodcaster_app/st_icon.png' %}" width="64" height="64">
+<br>
+<h3>Create account</h3>
+<br>
+<form action="" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+        <label class="form-label">{{field.label_tag}}</label>
+        {{field}}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary" value="register">Sign In</button>
+</form>
+
+<a href="/login">Already have an account? Go to login</a>
+{% endblock %}
