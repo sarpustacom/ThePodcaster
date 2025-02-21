@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Show</h2>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    Error: {{error}}
+  </div>
+{% endif %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" name="title" maxlength="160" value="{{show.title}}">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="4" maxlength="250" name="description" value="">{{show.description}}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" class="form-control" id="category" placeholder="Category" name="category" maxlength="160" value="{{show.category}}">
+    </div>
+
+    <div class="mb-3">
+        <label for="keywords" class="form-label">Keywords</label>
+        <input type="text" class="form-control" id="keywords" placeholder="Keywords" name="keywords" maxlength="160" value="{{show.keywords}}">
+    </div>
+
+
+    <div class="mb-3">
+        <label for="copyright" class="form-label">Copyright</label>
+        <input type="text" class="form-control" id="copyright" placeholder="Copyright" name="copyright" maxlength="160" value="{{show.copyright}}">
+    </div>
+
+    <div class="mb-3">
+        <label for="lang_code" class="form-label">Language Code</label>
+        <input type="text" class="form-control" id="lang_code" placeholder="Language code" name="lang_code" maxlength="10" value="{{show.language}}">
+    </div>
+
+    <div>
+        <label for="file_up" class="form-label">Replace Image</label>
+        <input class="form-control form-control-lg" id="file_up" type="file" name="cover_file">
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Update Show</button>
+    <a class="btn btn-danger" href="{% url 'dashboard' %}">Discard</a>
+
+</form>
+{% endblock %}

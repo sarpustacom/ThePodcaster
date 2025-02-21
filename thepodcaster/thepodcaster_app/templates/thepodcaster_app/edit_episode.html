@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Episode</h2>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    Error: {{error}}
+  </div>
+{% endif %}
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" name="title" maxlength="160" value="{{episode.title}}">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="4" maxlength="250" name="description">{{episode.description}}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Episode</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-danger">Discard</a>
+    
+
+
+</form>
+{% endblock %}

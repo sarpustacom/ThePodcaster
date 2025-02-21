@@ -20,8 +20,8 @@ def rss_generate_for_episode(episode: Episode):
     </item>
     """
 
-def rss_generate_for_show(show: Show, episodes: [Episode]):
-    my_channel_rss = f"""<?xml version="1.0" encoding="UTF-8" ?>
+def rss_generate_for_show(show: Show, episodes: [Episode]): # type: ignore
+    my_channel_rss = f"""<?xml version="1.0" encoding="windows-1254"?>
     <rss xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
 
     <channel>

@@ -14,7 +14,15 @@ import uuid
 # Create your views here.
 @login_required(login_url=reverse_lazy("login"))
 def dashboard(request):
-    return render(request, "thepodcaster_app/dashboard.html")
+    shows = models.Show.objects.filter(Q(user = request.user)).all()
+
+    episodes: [models.Episode] = []
+    for show in shows:
+        episodes += models.Episode.objects.filter(Q(show=show)).all()
+        if len(episodes) >= 5:
+            break
+    
+    return render(request, "thepodcaster_app/dashboard.html", context={"episodes":episodes})
 
 def index(request):
     return redirect(reverse_lazy("dashboard"))
@@ -99,7 +107,78 @@ def add_episode(request):
         return redirect(reverse_lazy("dashboard"))
     else:
         return render(request, "thepodcaster_app/add_episode.html", context={"shows":shows})
+    
+@login_required(login_url=reverse_lazy("login"))
+def edit_episode(request, id):
+    episode = models.Episode.objects.get(id=id)
 
+    if request.user != episode.show.user:
+        return redirect(reverse_lazy("episodes"))
+
+
+    if request.method == "POST":
+        if episode.title != request.POST["title"]:
+            episode.title = request.POST["title"]
+        if episode.description != request.POST["description"]:
+            episode.description = request.POST["description"]
+        episode.save()
+        return redirect(reverse_lazy("dashboard"))
+    else:
+        return render(request, "thepodcaster_app/edit_episode.html", context={"episode": episode})
+
+@login_required(login_url=reverse_lazy("login"))
+def edit_show(request, id):
+   
+    show = models.Show.objects.get(id=id)
+    if request.user != show.user:
+        return redirect(reverse_lazy("shows"))
+
+
+    if request.method == "POST":
+        if request.FILES["cover_file"]:
+            fss = FileSystemStorage()
+            file = request.FILES["cover_file"]
+            if not extensions.check_if_photo(file.name):
+                return render(request, "thepodcaster_app/add_show.html", context={"error": "Invalid file type!"})
+            new_filename = extensions.generate_uuid_namefile(file.name)
+            old_file = show.cover_url.split("/")[-1]
+            fss.delete(old_file)
+            f = fss.save(new_filename, file)
+            new_url = fss.url(f)
+            show.cover_url = new_url
+        if show.description != request.POST["description"]:
+            show.description = request.POST["description"]
+        if show.title != request.POST["title"]:
+            show.title = request.POST["title"]
+        if show.keywords != request.POST["keywords"]:
+            show.keywords = request.POST["keywords"]
+        if show.copyright != request.POST["copyright"]:
+            show.copyright = request.POST["copyright"]
+        if show.language != request.POST["lang_code"]:
+            show.language = request.POST["lang_code"]
+        
+        show.save()
+
+        return redirect(reverse_lazy("dashboard"))
+    else:
+        
+        return render(request, "thepodcaster_app/edit_show.html", context={"show":show})
+
+@login_required(login_url=reverse_lazy("login"))
+def options(request):
+    if request.method == "POST":
+        user: User = request.user
+        if user.last_name != request.POST["last_name"]:
+            user.last_name = request.POST["last_name"]
+
+        if user.first_name != request.POST["first_name"]:
+            user.first_name = request.POST["first_name"]
+
+        user.save()
+        
+        return redirect(reverse_lazy("dashboard"))
+    else:
+        return render(request, "thepodcaster_app/options.html")
 
 class CustomUserForm(UserCreationForm):
     class Meta:

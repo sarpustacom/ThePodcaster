@@ -10,5 +10,9 @@ urlpatterns = [
     path("dashboard/episodes/", views.episodes, name="episodes"),
     path("dashboard/shows/add", views.add_show, name="add_show"),
     path("dashboard/episodes/add", views.add_episode, name="add_episode"),
-    path("shows/rss/<int:id>/", views.get_rss, name="get_rss")
+    path("shows/rss/<int:id>/", views.get_rss, name="get_rss"),
+
+    path("dashboard/shows/<int:id>/edit", views.edit_show, name="edit_show"),
+    path("dashboard/episodes/<int:id>/edit", views.edit_episode, name="edit_episodes"),
+    path("dashboard/options/", views.options, name="options")
 ]
