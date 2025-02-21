@@ -9,6 +9,7 @@ from django.contrib.auth import logout
 from django.db.models.query import Q
 from . import extensions, models, rss_extension
 from django.http import HttpResponse
+import uuid
 
 # Create your views here.
 @login_required(login_url=reverse_lazy("login"))
@@ -30,7 +31,12 @@ def shows(request):
 
 @login_required(login_url=reverse_lazy("login"))
 def episodes(request):
-    return render(request, "thepodcaster_app/episodes.html")
+    shows = models.Show.objects.filter(Q(user = request.user)).all()
+
+    episodes: [models.Episode] = []
+    for show in shows:
+        episodes += models.Episode.objects.filter(Q(show=show)).all()
+    return render(request, "thepodcaster_app/episodes.html", context={"episodes":episodes})
 
 def get_rss(request, id):
     show = models.Show.objects.get(id=id)
@@ -62,7 +68,37 @@ def add_show(request):
     else:
         return render(request, "thepodcaster_app/add_show.html")
 
+@login_required(login_url=reverse_lazy("login"))
+def add_episode(request):
+    shows = models.Show.objects.filter(Q(user = request.user)).all()
+    if request.method == "POST" and request.FILES["audio_file"]:
+        file = request.FILES["audio_file"]
+        mimetype = ""
+        if extensions.check_if_mp3(file.name):
+            mimetype = "audio/mpeg"
+        elif extensions.check_if_wav(file.name):
+            mimetype =  "audio/wav"
+        else:
+            return render(request, "thepodcaster_app/add_episode.html", context={"shows":shows, "error":"Invalid file format!"})
+        
+        filename = extensions.generate_uuid_namefile(file.name)
+        filesize = len(file.read())
+        duration = request.POST["duration"]
+        title = request.POST["title"]
+        description = request.POST["description"]
+        guid = uuid.uuid4()
+        show = models.Show.objects.get(id = request.POST["show_select"])
 
+        fss = FileSystemStorage()
+        f = fss.save(filename, file)
+        url = fss.url(f)
+
+        models.Episode.objects.create(show = show, title=title, description=description, media_url = url, media_size = filesize, media_type = mimetype, duration=duration, guid=guid)
+
+
+        return redirect(reverse_lazy("dashboard"))
+    else:
+        return render(request, "thepodcaster_app/add_episode.html", context={"shows":shows})
 
 
 class CustomUserForm(UserCreationForm):

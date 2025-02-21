@@ -9,5 +9,6 @@ urlpatterns = [
     path("dashboard/shows/", views.shows, name="shows"),
     path("dashboard/episodes/", views.episodes, name="episodes"),
     path("dashboard/shows/add", views.add_show, name="add_show"),
+    path("dashboard/episodes/add", views.add_episode, name="add_episode"),
     path("shows/rss/<int:id>/", views.get_rss, name="get_rss")
 ]

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add New Episode</h2>
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    Error: {{error}}
+  </div>
+{% endif %}
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <select class="form-select form-select-lg mb-3" aria-label="Large select example" name="show_select">
+        {% for show in shows %}
+        <option value="{{show.id}}">{{show.id}} - {{show.title}}</option>
+        {% endfor %}
+      </select>
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" name="title" maxlength="160">
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="4" maxlength="250" name="description"></textarea>
+    </div>
+
+    <div>
+        <label for="file_up" class="form-label">Audio file</label>
+        <input class="form-control form-control-lg" id="file_up" type="file" name="audio_file">
+    </div>
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Duration</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" name="duration" maxlength="160">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Episode</button>
+    
+
+
+</form>
+{% endblock %}

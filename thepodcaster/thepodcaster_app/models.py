@@ -16,6 +16,7 @@ class Show(models.Model):
 class Episode(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     title = models.CharField(max_length=160)
+    description = models.CharField(max_length=250)
     pubDate = models.DateTimeField(auto_now_add=True)
     media_url = models.URLField()
     media_size = models.CharField(max_length=15)
@@ -23,4 +24,4 @@ class Episode(models.Model):
     duration = models.CharField(max_length=15)
     guid = models.UUIDField()
     explicit = models.BooleanField(default=False)
-    description = models.CharField(max_length=250)
+   
