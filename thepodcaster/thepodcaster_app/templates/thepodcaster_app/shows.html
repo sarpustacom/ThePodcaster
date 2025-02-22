@@ -12,7 +12,7 @@
 <div class="card mb-3" style="max-width: 540px;">
     <div class="row g-0">
         <div class="col-md-4">
-            <img src="{{show.cover_url}}" class="img-fluid rounded-start" alt="{{show.title}}">
+            <img src="{{show.cover_url}}" class="img-fluid rounded-start" alt="{{show.title}}" width="150" height="150">
         </div>
         <div class="col-md-7">
             <div class="card-body">
@@ -29,9 +29,22 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a href="{{show.id}}/edit" class="dropdown-item">Edit Show</a></li>
+                    <li><button class="btn btn-text" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom{{show.id}}" aria-controls="offcanvasBottom" style="color: red;">Delete Show</button></li>
                 </ul>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom{{show.id}}" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasBottomLabel">Warning!</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body small">
+      <p>Show will be deleted with all episodes. You cannot restore this back. Are you sure?</p>
+      <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas" aria-label="Close">Dismiss</button>
+      <a href="delete/{{show.id}}" class="btn btn-danger">Delete</a>
     </div>
 </div>
 {% endfor %}

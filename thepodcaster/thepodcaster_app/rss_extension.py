@@ -1,5 +1,6 @@
 from .models import Episode, Show
 from django.conf import settings
+from . import extensions
 import xml.dom.minidom
 
 
@@ -9,7 +10,7 @@ def rss_generate_for_episode(episode: Episode):
             <author>{episode.show.user.first_name} {episode.show.user.last_name}</author>
             <itunes:author>{episode.show.user.first_name} {episode.show.user.last_name}</itunes:author>
             <title>{episode.title}</title>
-            <pubDate>{episode.pubDate}</pubDate>
+            <pubDate>{extensions.correct_date(str(episode.pubDate))}</pubDate>
             <enclosure url="{episode.media_url}" type="{episode.media_type}" length="{episode.media_size}" />
             <itunes:duration>{episode.duration}</itunes:duration>
             <guid isPermaLink="false">{episode.guid}</guid>
@@ -25,7 +26,7 @@ def rss_generate_for_show(show: Show, episodes: [Episode]): # type: ignore
     <rss xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
 
     <channel>
-    <title>Creative Engineering</title>
+    <title>{show.title}</title>
         <googleplay:author>{show.user.first_name} {show.user.last_name}</googleplay:author>
         <author>{show.user.first_name} {show.user.last_name}</author>
         <itunes:author>{show.user.first_name} {show.user.last_name}</itunes:author>
@@ -47,7 +48,7 @@ def rss_generate_for_show(show: Show, episodes: [Episode]): # type: ignore
         <googleplay:image href="{show.cover_url}" />
         <language>{show.language}</language>
         <itunes:explicit>{"yes" if show.explicit else "no"}</itunes:explicit>
-        <pubDate>{show.pubDate}</pubDate>
+        <pubDate>{extensions.correct_date(str(show.pubDate))}</pubDate>
         <link>{settings.DOMAIN}/shows/rss/{show.id}</link>
         <itunes:image href="{show.cover_url}" />
 

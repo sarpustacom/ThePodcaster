@@ -38,6 +38,7 @@ def shows(request):
     shows = models.Show.objects.filter(Q(user = request.user)).all()
     return render(request, "thepodcaster_app/shows.html", context={"shows":shows})
 
+#
 @login_required(login_url=reverse_lazy("login"))
 def episodes(request):
     shows = models.Show.objects.filter(Q(user = request.user)).all()
@@ -47,19 +48,21 @@ def episodes(request):
         episodes += models.Episode.objects.filter(Q(show=show)).all()
     return render(request, "thepodcaster_app/episodes.html", context={"episodes":episodes})
 
+# RSS Feed
 def get_rss(request, id):
     show = models.Show.objects.get(id=id)
     episodes = models.Episode.objects.filter(Q(show=show)).all()
     generated_rss = rss_extension.rss_generate_for_show(show, episodes)
     return HttpResponse(generated_rss, content_type='application/rss+xml')
 
+# Add Operations
 @login_required(login_url=reverse_lazy("login"))
 def add_show(request):
     if request.method == "POST" and request.FILES["cover_file"]:
         file = request.FILES["cover_file"]
         if not extensions.check_if_photo(file.name):
             return render(request, "thepodcaster_app/add_show.html", context={"error": "Invalid file type!"})
-        new_filename = extensions.generate_uuid_namefile(file.name)
+        new_filename = "images/"+extensions.generate_uuid_namefile(file.name)
         fss = FileSystemStorage()
         fn = fss.save(new_filename, file)
         url = fss.url(fn)
@@ -90,7 +93,7 @@ def add_episode(request):
         else:
             return render(request, "thepodcaster_app/add_episode.html", context={"shows":shows, "error":"Invalid file format!"})
         
-        filename = extensions.generate_uuid_namefile(file.name)
+        filename = "sounds/"+extensions.generate_uuid_namefile(file.name)
         filesize = len(file.read())
         duration = request.POST["duration"]
         title = request.POST["title"]
@@ -108,7 +111,8 @@ def add_episode(request):
         return redirect(reverse_lazy("dashboard"))
     else:
         return render(request, "thepodcaster_app/add_episode.html", context={"shows":shows})
-    
+
+# Update Operations  
 @login_required(login_url=reverse_lazy("login"))
 def edit_episode(request, id):
     episode = models.Episode.objects.get(id=id)
@@ -141,9 +145,9 @@ def edit_show(request, id):
             file = request.FILES["cover_file"]
             if not extensions.check_if_photo(file.name):
                 return render(request, "thepodcaster_app/add_show.html", context={"error": "Invalid file type!"})
-            new_filename = extensions.generate_uuid_namefile(file.name)
+            new_filename = "images/"+extensions.generate_uuid_namefile(file.name)
             old_file = show.cover_url.split("/")[-1]
-            fss.delete(old_file)
+            fss.delete("images/"+old_file)
             f = fss.save(new_filename, file)
             new_url = fss.url(f)
             show.cover_url = new_url
@@ -165,6 +169,7 @@ def edit_show(request, id):
         
         return render(request, "thepodcaster_app/edit_show.html", context={"show":show})
 
+# Options
 @login_required(login_url=reverse_lazy("login"))
 def options(request):
     if request.method == "POST":
@@ -180,7 +185,25 @@ def options(request):
         return redirect(reverse_lazy("dashboard"))
     else:
         return render(request, "thepodcaster_app/options.html")
+    
+# Delete Operations
+@login_required(login_url=reverse_lazy("login"))
+def delete_confirm_episode(request, id):
+    episode = models.Episode.objects.get(id=id)
+    if episode.show.user == request.user:
+        episode.delete()
+    return redirect(reverse_lazy("dashboard"))
 
+
+@login_required(login_url=reverse_lazy("login"))
+def delete_confirm_show(request, id):
+    show = models.Show.objects.get(id=id)
+    if show.user == request.user:
+        show.delete()
+    return redirect(reverse_lazy("dashboard"))
+
+
+# Form Classes
 class CustomCreateUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(CustomCreateUserForm, self).__init__(*args, **kwargs)
@@ -190,23 +213,23 @@ class CustomCreateUserForm(UserCreationForm):
         model = User
         fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
     
+
 class CustomLoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username', 'password']
 
-    
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+            
+# View Classes        
 class CreateAccountView(CreateView):
     form_class = CustomCreateUserForm
     template_name = "registration/register.html"
     success_url = reverse_lazy("login")
     
-    
-
 class LoginView(LoginView):
     template_name = 'registration/login.html'
     form_class = CustomLoginForm
