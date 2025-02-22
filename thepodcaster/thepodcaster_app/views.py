@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.views.generic import CreateView
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import logout
@@ -180,13 +181,34 @@ def options(request):
     else:
         return render(request, "thepodcaster_app/options.html")
 
-class CustomUserForm(UserCreationForm):
+class CustomCreateUserForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomCreateUserForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
     class Meta:
         model = User
         fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+    
+class CustomLoginForm(AuthenticationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
-
+    
+    def __init__(self, *args, **kwargs):
+        super(CustomLoginForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 class CreateAccountView(CreateView):
-    form_class = CustomUserForm
+    form_class = CustomCreateUserForm
     template_name = "registration/register.html"
     success_url = reverse_lazy("login")
+    
+    
+
+class LoginView(LoginView):
+    template_name = 'registration/login.html'
+    form_class = CustomLoginForm
+    success_url = reverse_lazy('home')
+    redirect_authenticated_user = True

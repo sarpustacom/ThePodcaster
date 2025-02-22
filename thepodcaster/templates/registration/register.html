@@ -1,21 +1,32 @@
 {% extends "base_withoutnav.html" %}
 {% load static %}
 {% block content %}
-<br><br><br>
-<img src="{% static 'thepodcaster_app/st_icon.png' %}" width="64" height="64">
-<br>
-<h3>Create account</h3>
-<br>
 <form action="" method="post">
     {% csrf_token %}
-    {% for field in form %}
-    <div class="mb-3">
-        <label class="form-label">{{field.label_tag}}</label>
-        {{field}}
+    <div class="d-flex align-items-center py-4 bg-body-tertiary">
+        <main class="form-signin w-100 m-auto">
+            <form>
+                <img src="{% static 'thepodcaster_app/st_icon.png' %}" width="64" height="64">
+                <h1 class="h3 mb-3 fw-normal">Create Account</h1>
+
+                {% for field in form %}
+                <div class="form-floating" style="margin:5px;">
+                    
+                    {{field}}
+                    {{field.label_tag}}
+
+                </div>
+                {% endfor %}
+
+
+                <button class="btn btn-primary w-100 py-2" type="submit">Register</button>
+                <br><br>
+                <a href="/login">Already have an account? Go to login</a>
+                <p class="mt-5 mb-3 text-body-secondary">© 2025 SarpTech</p>
+            </form>
+        </main>
     </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-primary" value="register">Sign In</button>
 </form>
 
-<a href="/login">Already have an account? Go to login</a>
+
 {% endblock %}

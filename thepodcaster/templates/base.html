@@ -10,56 +10,46 @@
 </head>
 <body>
 
-    <main class="d-flex flex-nowrap">
-        <!-- Header -->
-        <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-              <img src="{% static 'thepodcaster_app/st_icon.png' %}" alt="" width="40" height="40" style="margin:5px;">
-              
-              <span class="fs-4">The Podcaster</span>
+  <main>
+    <header class="p-3 mb-3 border-bottom">
+      <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+          <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+            <img src="{% static 'thepodcaster_app/st_icon.png' %}" alt="" width="40" height="40" style="margin:5px;">
+            <span class="fs-4">The Podcaster</span>
+          </a>
+  
+          <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/dashboard/" class="nav-link px-2 link-secondary">Home</a></li>
+            <li><a href="/dashboard/shows/" class="nav-link px-2 link-body-emphasis">Shows</a></li>
+            <li><a href="/dashboard/episodes" class="nav-link px-2 link-body-emphasis">Episodes</a></li>
+          </ul>
+  
+          <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+            <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+          </form>
+  
+          <div class="dropdown text-end">
+            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{% static 'thepodcaster_app/usericon.png' %}" alt="mdo" width="32" height="32" class="rounded-circle">
             </a>
-            <hr>
-            <ul class="nav nav-pills flex-column mb-auto">
-              <li class="nav-item">
-                <a href="/dashboard" class="nav-link link-body-emphasis" aria-current="page">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/shows" class="nav-link link-body-emphasis">
-                  Shows
-                </a>
-              </li>
-              <li>
-                <a href="/dashboard/episodes" class="nav-link link-body-emphasis">
-                  Episodes
-                </a>
-              </li>
+            <ul class="dropdown-menu text-small">
+              <li><a class="dropdown-item" href="/dashboard/options">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/log_out">Sign out</a></li>
             </ul>
-            <hr>
-            <div class="dropdown">
-              <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="{% static 'thepodcaster_app/usericon.png' %}" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong>@{{user.username}}</strong>
-              </a>
-              <ul class="dropdown-menu text-small shadow">
-                <li><a class="dropdown-item" href="/dashboard/options">Options</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/log_out">Sign out</a></li>
-              </ul>
-            </div>
           </div>
-          <!-- End Header -->
- 
-          <!-- Body -->
-          <main>
-            <br>
-            <div class="container">
-                {% block content %}
-                {% endblock %}
-             </div>
-          </main>
-          <!-- End Body -->
-    </main>  
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <br>
+      <div class="container">
+          {% block content %}
+          {% endblock %}
+       </div>
+    </main>
+  </main> 
 </body>
 </html>
